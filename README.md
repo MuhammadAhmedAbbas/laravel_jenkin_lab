@@ -23,3 +23,5 @@ php artisan key:generate
 touch database/database.sqlite
 php artisan migrate
 php artisan serve
+
+Jenkins pipeline test - automatic deployment working.
