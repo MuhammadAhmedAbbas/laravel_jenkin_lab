@@ -11,10 +11,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 sh '''
-                sudo -u ahmed env WORKSPACE="$WORKSPACE" /bin/bash -c '
-                cd "$WORKSPACE"
-                minikube image build -t laravel-students:v1 .
-                '
+                sudo -u ahmed /bin/bash -lc 'cd /var/lib/jenkins/workspace/Laravel-Kubernetes-CI-CD && minikube image build -t laravel-students:v1 .'
                 '''
             }
         }
@@ -22,7 +19,7 @@ pipeline {
         stage('Deploy MySQL') {
             steps {
                 sh '''
-                sudo -u ahmed kubectl apply -f "$WORKSPACE/k8s/mysql.yaml"
+                sudo -u ahmed /bin/bash -lc 'kubectl apply -f /var/lib/jenkins/workspace/Laravel-Kubernetes-CI-CD/k8s/mysql.yaml'
                 '''
             }
         }
@@ -30,7 +27,7 @@ pipeline {
         stage('Deploy Laravel') {
             steps {
                 sh '''
-                sudo -u ahmed kubectl apply -f "$WORKSPACE/k8s/laravel.yaml"
+                sudo -u ahmed /bin/bash -lc 'kubectl apply -f /var/lib/jenkins/workspace/Laravel-Kubernetes-CI-CD/k8s/laravel.yaml'
                 '''
             }
         }
@@ -38,8 +35,7 @@ pipeline {
         stage('Verify Deployment') {
             steps {
                 sh '''
-                sudo -u ahmed kubectl get pods
-                sudo -u ahmed kubectl get services
+                sudo -u ahmed /bin/bash -lc 'kubectl get pods && kubectl get services'
                 '''
             }
         }
