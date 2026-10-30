@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: laravel
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: laravel
+  template:
+    metadata:
+      labels:
+        app: laravel
+    spec:
+      containers:
+      - name: laravel
+        image: laravel-students:v1
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+        env:
+        - name: APP_KEY
+          valueFrom:
+            secretKeyRef:
+              name: laravel-secret
+              key: APP_KEY
+        - name: DB_CONNECTION
+          value: mysql
+        - name: DB_HOST
+          value: mysql
+        - name: DB_PORT
+          value: "3306"
+        - name: DB_DATABASE
+          value: laravel
+        - name: DB_USERNAME
+          value: root
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: laravel-secret
+              key: DB_PASSWORD
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: laravel-service
+spec:
+  type: NodePort
+  selector:
+    app: laravel
+  ports:
+  - port: 8000
+    targetPort: 8000
+    nodePort: 30080
